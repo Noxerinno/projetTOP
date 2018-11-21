@@ -1,27 +1,29 @@
-import java.nio.charset.CodingErrorAction;
-
-import scala.io.Codec;
 import scala.io.Source;
 
 object Main extends App{
+    type AirportValues = (Int, String, String, String, Double, Double);
     var filename : String = "src/airports.dat";
 
-    def loadAirports(filename:String) : List[(Int, String, String, String, Double, Double)] = {
+    def loadAirports(filename:String) : Array[AirportValues] = {
         //Parse les données de airports.dat dans une liste de liste a tuple
+        var i = 0;
+        var length = 0;
 
-        implicit val codec = Codec("UTF-8");
-        codec.onUnmappableCharacter(CodingErrorAction.IGNORE);
-        var airports : List[(Int, String, String, String, Double, Double)] = Nil;       
-        
-        for (line <- Source.fromFile("src/airports.dat").getLines){
-            val cols = line.split(",").map(_.trim);
-            //println(s"${cols(0)}~${cols(1)}~${cols(2)}~${cols(3)}~${cols(6)}~${cols(7)}");
-            airports = (s"${cols(0)}".toInt, s"${cols(1)}", s"${cols(2)}", s"${cols(3)}", s"${cols(6)}".toDouble, s"${cols(7)}".toDouble) :: airports;
+        for (line <- Source.fromFile(filename).getLines){
+            length += 1;
         }
 
-        println(airports.length);
+        var airports = new Array[AirportValues](length);      
+
+        for (line <- Source.fromFile(filename).getLines){
+            val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim);
+
+            airports(i) = (cols(0).toInt, cols(1), cols(2), cols(3), cols(6).toDouble, cols(7).toDouble);
+            i += 1;
+        }
+
         return airports;
     }
 
-    var airports : List[(Int, String, String, String, Double, Double)] = loadAirports(filename);
+    val airports : Array[AirportValues] = loadAirports(filename);
 }

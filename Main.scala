@@ -6,14 +6,9 @@ object Main extends App{
 
     def loadAirports(filename:String) : Array[AirportValues] = {
         //Parse les données de airports.dat dans une liste de liste a tuple
+        
         var i = 0;
-        var length = 0;
-
-        for (line <- Source.fromFile(filename).getLines){
-            length += 1;
-        }
-
-        var airports = new Array[AirportValues](length);      
+        var airports = new Array[AirportValues](Source.fromFile(filename).getLines.length);      
 
         for (line <- Source.fromFile(filename).getLines){
             val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim);
@@ -26,4 +21,10 @@ object Main extends App{
     }
 
     val airports : Array[AirportValues] = loadAirports(filename);
+
+    // for(i <- 0 to airports.length-1){
+    //     println(airports(i));
+    // }
+    
+    //Fin du programme
 }

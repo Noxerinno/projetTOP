@@ -24,25 +24,56 @@ object Test extends App{
     //---------------------------------------------------------------------------------------------------------------------(2h30 research - 1h30 programming)
 
     def filter(airports:Array[AirportValues]): Array[AirportValues] = {
-        
-        //Filtre par noms de pays
-        var contryNum = 0;
-        var countryName:List[String] = Nil;
-        var filteredAirports:Array[AirportValues] = Array();
-
-        print("Enter the number of countries you need to filter : ");
-        contryNum = StdIn.readInt();
+        var filteredAirports:List[AirportValues] = Nil;
+        var choice = 0;
 
         //var countryName:Array[String] = new Array[String](contryNum-1);
 
-        do{
-            print("Enter your country name : ");
-            countryName = '"'+StdIn.readLine()+'"' :: countryName;
-        }while(contryNum < 0);
+        println("Which filter do you want to use ? \n    1.Filter by country name\n    2.Filter by hemisphere\n    3.Filter by zone\n");
+        print("Enter the number corresponding of your choice : ");
+        choice = StdIn.readInt();
 
-        for(i <- 0 to airports.length-1){
-            if(airports(i)._4 == countryName)
-                filteredAirports = filteredAirports :+ airports(i);
+        choice match{
+            case 1 => {
+                var contryNum = 0;
+                var countryName:List[String] = Nil;
+
+                print("\nEnter the number of countries you need to filter : ");
+                contryNum = StdIn.readInt();
+
+                print("Enter your country name : ");
+                while(contryNum > 0){
+                    countryName = '"'+StdIn.readLine()+'"' :: countryName;
+                    contryNum -= 1;
+                }
+
+                for(i <- 0 to airports.length-1){
+                    if(airports(i)._4 == countryName)
+                        filteredAirports = airports(i) :: filteredAirports;
+                }
+            }
+
+            case 2 => {
+                var index = 0;
+
+                print("\nDo you want to filter all the airports in the northern hemisphere ? (y/o)  ");
+                if(StdIn.readLine() == 'y'){
+                    for(i <- 0 to airports.length-1){
+                        if(airports(i)._5 >= 0)
+                            filteredAirports = airports(i) :: filteredAirports;
+                    }
+                }
+                else{
+                    for(i <- 0 to airports.length-1){
+                        if(airports(i)._5 < 0)
+                            filteredAirports = airports(i) :: filteredAirports;
+                    }
+                }
+            }
+
+            case 3 => {
+                
+            }
         }
 
         // println(countryName);
@@ -51,8 +82,11 @@ object Test extends App{
         //     println(filteredAirports(i));
         // }
 
-        return filteredAirports;
+        return filteredAirports.toArray;
     }    
 
     val filteredAirports = filter(airports);
+    println(filteredAirports.length)
+
+    //---------------------------------------------------------------------------------------------------------------------(0h15 research - 2h30 programming)
 }

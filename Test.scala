@@ -4,6 +4,7 @@ import scala.math.{Pi,sin,cos,pow,acos,sqrt,min,max};
 object Test extends App{
     type AirportValues = (Int, String, String, String, Double, Double);
     type CountriesValues = (Int, String, String, Long, Long);
+    type DensityValues = (String, Int, Double, Double);
 
     def loadAirports(filename:String) : Array[AirportValues] = {
         
@@ -167,7 +168,7 @@ object Test extends App{
         for (line <- Source.fromFile(filename).getLines){
             val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim);
 
-            countries(i) = (cols(0).toInt, cols(1), cols(2), cols(3).toLong, cols(4).toLong);
+            countries(i) = (cols(0).toInt, '"'+cols(1)+'"', '"'+cols(2)+'"', cols(3).toLong, cols(4).toLong);
             i += 1;
         }
 
@@ -175,5 +176,44 @@ object Test extends App{
     }
 
     val countries : Array[CountriesValues] = loadCountries("src/countries.csv");
-    //---------------------------------------------------------------------------------------------------------------------(1h00 research - 0h30 programming)
+
+    def density(airports:Array[AirportValues], countries:Array[CountriesValues]) : Array[DensityValues] = {
+        //Calcul la densité d'aéroport par pays en fct de la superficie et de la population du pays
+        var density : Array[DensityValues] = new Array[DensityValues](countries.length);
+        var index : (Int, Int) = (0, 0);
+
+        //Remplissage de density
+        for(i <- 0 to countries.length-1){
+            density(i) = (countries(i)._2 , 0, 0, 0);
+        }
+
+        //Calcul du nombre d'aéroport par pays
+        for(i <- 0 to airports.length-1){
+            for(j <- 0 to density.length-1){
+                if(density(j)._1 == airports(i)._4){
+                    density(j) = (density(j)._1, density(j)._2 + 1, density(j)._3, density(j)._4);
+                }
+            }
+        }
+        
+        //Calcul des densités
+        for(i <- 0 to density.length-1){
+            var populationDensity = density(i)._2.toDouble / countries(i)._4;
+            var superficyDensity = density(i)._2.toDouble / countries(i)._5;
+
+            println(populationDensity)
+
+            density(i) = (density(i)._1, density(i)._2, populationDensity, superficyDensity);
+        }
+
+        return density;
+    }
+
+    val density : Array[DensityValues] = density(airports, countries);
+    println(density(75));
+    //---------------------------------------------------------------------------------------------------------------------(1h00 research - 3h00 programming)
+
+    //Cf Main du projet_top_26
+
+    //---------------------------------------------------------------------------------------------------------------------(0h30 research - 1h30 programming)
 }
